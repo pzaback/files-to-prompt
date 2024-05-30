@@ -1,7 +1,5 @@
 import os
-
 from click.testing import CliRunner
-
 from files_to_prompt.cli import cli
 
 
@@ -13,7 +11,6 @@ def test_basic_functionality(tmpdir):
             f.write("Contents of file1")
         with open("test_dir/file2.txt", "w") as f:
             f.write("Contents of file2")
-
         result = runner.invoke(cli, ["test_dir"])
         assert result.exit_code == 0
         assert "test_dir/file1.txt" in result.output
@@ -28,11 +25,9 @@ def test_include_hidden(tmpdir):
         os.makedirs("test_dir")
         with open("test_dir/.hidden.txt", "w") as f:
             f.write("Contents of hidden file")
-
         result = runner.invoke(cli, ["test_dir"])
         assert result.exit_code == 0
         assert "test_dir/.hidden.txt" not in result.output
-
         result = runner.invoke(cli, ["test_dir", "--include-hidden"])
         assert result.exit_code == 0
         assert "test_dir/.hidden.txt" in result.output
@@ -49,12 +44,10 @@ def test_ignore_gitignore(tmpdir):
             f.write("This file should be ignored")
         with open("test_dir/included.txt", "w") as f:
             f.write("This file should be included")
-
         result = runner.invoke(cli, ["test_dir"])
         assert result.exit_code == 0
         assert "test_dir/ignored.txt" not in result.output
         assert "test_dir/included.txt" in result.output
-
         result = runner.invoke(cli, ["test_dir", "--ignore-gitignore"])
         assert result.exit_code == 0
         assert "test_dir/ignored.txt" in result.output
@@ -73,7 +66,6 @@ def test_multiple_paths(tmpdir):
             f.write("Contents of file2")
         with open("single_file.txt", "w") as f:
             f.write("Contents of single file")
-
         result = runner.invoke(cli, ["test_dir1", "test_dir2", "single_file.txt"])
         assert result.exit_code == 0
         assert "test_dir1/file1.txt" in result.output
@@ -92,13 +84,11 @@ def test_ignore_patterns(tmpdir):
             f.write("This file should be ignored due to ignore patterns")
         with open("test_dir/file_to_include.txt", "w") as f:
             f.write("This file should be included")
-
         result = runner.invoke(cli, ["test_dir", "--ignore", "*.txt"])
         assert result.exit_code == 0
         assert "test_dir/file_to_ignore.txt" not in result.output
         assert "This file should be ignored due to ignore patterns" not in result.output
         assert "test_dir/file_to_include.txt" not in result.output
-
         result = runner.invoke(cli, ["test_dir", "--ignore", "file_to_ignore.*"])
         assert result.exit_code == 0
         assert "test_dir/file_to_ignore.txt" not in result.output
@@ -123,7 +113,6 @@ def test_mixed_paths_with_options(tmpdir):
             f.write("This hidden file should be included")
         with open("single_file.txt", "w") as f:
             f.write("Contents of single file")
-
         result = runner.invoke(cli, ["test_dir", "single_file.txt"])
         assert result.exit_code == 0
         assert "test_dir/ignored_in_gitignore.txt" not in result.output
@@ -132,7 +121,6 @@ def test_mixed_paths_with_options(tmpdir):
         assert "test_dir/.hidden_included.txt" not in result.output
         assert "single_file.txt" in result.output
         assert "Contents of single file" in result.output
-
         result = runner.invoke(cli, ["test_dir", "single_file.txt", "--include-hidden"])
         assert result.exit_code == 0
         assert "test_dir/ignored_in_gitignore.txt" not in result.output
@@ -141,7 +129,6 @@ def test_mixed_paths_with_options(tmpdir):
         assert "test_dir/.hidden_included.txt" in result.output
         assert "single_file.txt" in result.output
         assert "Contents of single file" in result.output
-
         result = runner.invoke(
             cli, ["test_dir", "single_file.txt", "--ignore-gitignore"]
         )
@@ -152,7 +139,6 @@ def test_mixed_paths_with_options(tmpdir):
         assert "test_dir/.hidden_included.txt" not in result.output
         assert "single_file.txt" in result.output
         assert "Contents of single file" in result.output
-
         result = runner.invoke(
             cli,
             ["test_dir", "single_file.txt", "--ignore-gitignore", "--include-hidden"],
@@ -174,13 +160,10 @@ def test_binary_file_warning(tmpdir):
             f.write(b"\xff")
         with open("test_dir/text_file.txt", "w") as f:
             f.write("This is a text file")
-
         result = runner.invoke(cli, ["test_dir"])
         assert result.exit_code == 0
-
         stdout = result.stdout
         stderr = result.stderr
-
         assert "test_dir/text_file.txt" in stdout
         assert "This is a text file" in stdout
         assert "\ntest_dir/binary_file.bin" not in stdout
@@ -198,18 +181,27 @@ def test_xml_format_dir(tmpdir):
             f.write("Contents of file1")
         with open("test_dir/file2.txt", "w") as f:
             f.write("Contents of file2")
-
         result = runner.invoke(cli, ["test_dir", "--xml"])
         assert result.exit_code == 0
         have = result.output
         want = """Here are some documents for you to reference for your task:
 
 <documents>
-<document path="test_dir/file1.txt">
+<document index="1">
+  <source>
+    test_dir/file1.txt
+  </source>
+  <document_content>
 Contents of file1
+  </document_content>
 </document>
-<document path="test_dir/file2.txt">
+<document index="2">
+  <source>
+    test_dir/file2.txt
+  </source>
+  <document_content>
 Contents of file2
+  </document_content>
 </document>
 </documents>
 """
@@ -224,21 +216,29 @@ def test_xml_format_multiple_paths(tmpdir):
             f.write("Contents of file1")
         with open("test_dir/file2.txt", "w") as f:
             f.write("Contents of file2")
-
         result = runner.invoke(
             cli, ["test_dir/file1.txt", "test_dir/file2.txt", "--xml"]
         )
-
         assert result.exit_code == 0
         have = result.output
         want = """Here are some documents for you to reference for your task:
 
 <documents>
-<document path="test_dir/file1.txt">
+<document index="1">
+  <source>
+    test_dir/file1.txt
+  </source>
+  <document_content>
 Contents of file1
+  </document_content>
 </document>
-<document path="test_dir/file2.txt">
+<document index="2">
+  <source>
+    test_dir/file2.txt
+  </source>
+  <document_content>
 Contents of file2
+  </document_content>
 </document>
 </documents>
 """
