@@ -107,19 +107,25 @@ Contents of file3.txt
 ### XML Output
 
 Anthropic has provided [specific guidelines](https://docs.anthropic.com/claude/docs/long-context-window-tips) for optimally structuring prompts to take advantage of Claude's extended context window.
-
 To structure the output in this way, use the optional `--xml` flag, which will produce output like this:
-
 ```xml
 Here are some documents for you to reference for your task:
-
 <documents>
-<document path="my_directory/file1.txt">
+<document index="1">
+<source>
+my_directory/file1.txt
+</source>
+<document_content>
 Contents of file1.txt
+</document_content>
 </document>
-
-<document path="my_directory/file2.txt">
+<document index="2">
+<source>
+my_directory/file2.txt
+</source>
+<document_content>
 Contents of file2.txt
+</document_content>
 </document>
 ...
 </documents>
