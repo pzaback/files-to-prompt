@@ -39,12 +39,12 @@ def print_default(path, content):
 
 def print_as_xml(path, content, index):
     click.echo(f'<document index="{index}">')
-    click.echo("  <source>")
-    click.echo(f"    {path}")
-    click.echo("  </source>")
-    click.echo("  <document_content>")
+    click.echo("<source>")
+    click.echo(f"{path}")
+    click.echo("</source>")
+    click.echo("<document_content>")
     click.echo(content)
-    click.echo("  </document_content>")
+    click.echo("</document_content>")
     click.echo("</document>")
 
 
@@ -141,20 +141,20 @@ def cli(paths, include_hidden, ignore_gitignore, ignore_patterns, xml):
     Here are some documents for you to reference for your task:
     <documents>
     <document index="1">
-      <source>
-      path/to/file1.txt
-      </source>
-      <document_content>
-      Contents of file1.txt
-      </document_content>
+    <source>
+    path/to/file1.txt
+    </source>
+    <document_content>
+    Contents of file1.txt
+    </document_content>
     </document>
     <document index="2">
-      <source>
-      path/to/file2.txt
-      </source>
-      <document_content>
-      Contents of file2.txt
-      </document_content>
+    <source>
+    path/to/file2.txt
+    </source>
+    <document_content>
+    Contents of file2.txt
+    </document_content>
     </document>
     ...
     </documents>

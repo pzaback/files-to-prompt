@@ -188,20 +188,20 @@ def test_xml_format_dir(tmpdir):
 
 <documents>
 <document index="1">
-  <source>
-    test_dir/file1.txt
-  </source>
-  <document_content>
+<source>
+test_dir/file1.txt
+</source>
+<document_content>
 Contents of file1
-  </document_content>
+</document_content>
 </document>
 <document index="2">
-  <source>
-    test_dir/file2.txt
-  </source>
-  <document_content>
+<source>
+test_dir/file2.txt
+</source>
+<document_content>
 Contents of file2
-  </document_content>
+</document_content>
 </document>
 </documents>
 """
@@ -225,20 +225,20 @@ def test_xml_format_multiple_paths(tmpdir):
 
 <documents>
 <document index="1">
-  <source>
-    test_dir/file1.txt
-  </source>
-  <document_content>
+<source>
+test_dir/file1.txt
+</source>
+<document_content>
 Contents of file1
-  </document_content>
+</document_content>
 </document>
 <document index="2">
-  <source>
-    test_dir/file2.txt
-  </source>
-  <document_content>
+<source>
+test_dir/file2.txt
+</source>
+<document_content>
 Contents of file2
-  </document_content>
+</document_content>
 </document>
 </documents>
 """
