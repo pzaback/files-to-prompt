@@ -1,0 +1,8 @@
+<document index="{{ index }}">
+<filepath>
+{{ path }}
+</filepath>
+<document_content>
+{{ content }}
+</document_content>
+</document>

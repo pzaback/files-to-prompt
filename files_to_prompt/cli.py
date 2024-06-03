@@ -1,6 +1,7 @@
 import os
 from fnmatch import fnmatch
 import click
+from jinja2 import Environment, FileSystemLoader
 
 
 def should_ignore(path, gitignore_rules):
@@ -33,7 +34,6 @@ def print_default(path, content):
     click.echo(path)
     click.echo("---")
     click.echo(content)
-    click.echo()
     click.echo("---")
 
 
@@ -48,6 +48,16 @@ def print_as_xml(path, content, index):
     click.echo("</document>")
 
 
+def print_from_template(template_file, path, content, index):
+    """Renders the content using the provided Jinja2 template."""
+    env = Environment(loader=FileSystemLoader(os.path.dirname(template_file)))
+    template = env.get_template(os.path.basename(template_file))
+    rendered_content = template.render(
+        content=content, path=path, index=index
+    )  # Pass path and index to the template
+    click.echo(rendered_content)
+
+
 def process_path(
     path,
     include_hidden,
@@ -55,13 +65,18 @@ def process_path(
     gitignore_rules,
     ignore_patterns,
     xml,
-    index,  # Add index as a parameter here
+    template_file,
+    index,
 ):
     if os.path.isfile(path):
         try:
             with open(path, "r") as f:
-                print_path(path, f.read(), xml, str(index))
-                # index += 1  # No need to increment here anymore
+                content = f.read()
+                if template_file:
+                    print_from_template(template_file, path, content, index)
+                else:
+                    print_path(path, content, xml, str(index))
+                index += 1
         except UnicodeDecodeError:
             warning_message = f"Warning: Skipping file {path} due to UnicodeDecodeError"
             click.echo(click.style(warning_message, fg="red"), err=True)
@@ -92,13 +107,20 @@ def process_path(
                 file_path = os.path.join(root, file)
                 try:
                     with open(file_path, "r") as f:
-                        print_path(file_path, f.read(), xml, str(index))
+                        content = f.read()
+                        if template_file:
+                            print_from_template(
+                                template_file, file_path, content, index
+                            )
+                        else:
+                            print_path(file_path, content, xml, str(index))
                         index += 1
                 except UnicodeDecodeError:
                     warning_message = (
                         f"Warning: Skipping file {file_path} due to UnicodeDecodeError"
                     )
                     click.echo(click.style(warning_message, fg="red"), err=True)
+    return index
 
 
 @click.command()
@@ -125,8 +147,14 @@ def process_path(
     is_flag=True,
     help="Output in XML format suitable for Claude's long context window.",
 )
+@click.option(
+    "--template-file",
+    "-t",
+    type=click.Path(exists=True),
+    help="Path to a Jinja2 template file for formatting context items.",
+)
 @click.version_option()
-def cli(paths, include_hidden, ignore_gitignore, ignore_patterns, xml):
+def cli(paths, include_hidden, ignore_gitignore, ignore_patterns, xml, template_file):
     """
     Takes one or more paths to files or directories and outputs every file,
     recursively, each one preceded with its filename like this:
@@ -169,17 +197,17 @@ def cli(paths, include_hidden, ignore_gitignore, ignore_patterns, xml):
         click.echo("Here are some documents for you to reference for your task:")
         click.echo()
         click.echo("<documents>")
-    index = 1  # Initialize index here
+    index = 1
     for path in paths:
-        process_path(
+        index = process_path(
             path,
             include_hidden,
             ignore_gitignore,
             gitignore_rules,
             ignore_patterns,
             xml,
-            index,  # Pass the index to process_path
+            template_file,
+            index,
         )
-        index += 1  # Increment index after processing each path
     if xml:
         click.echo("</documents>")
