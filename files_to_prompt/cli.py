@@ -35,14 +35,14 @@ def print_from_template(template_file, path, content, index):
 def process_path(
     path,
     include_hidden,
-    ignore_gitignore,
+    use_gitignore,
     ignore_files,  # List of ignore file paths
     ignore_patterns,
     template_file,
     index,
 ):
     ignore_rules = []
-    if not ignore_gitignore:
+    if use_gitignore:
         ignore_rules.extend(read_ignore_file(os.path.join(path, ".gitignore")))
     for ignore_file in ignore_files:
         ignore_rules.extend(read_ignore_file(ignore_file))
@@ -116,12 +116,15 @@ def process_path(
 @click.option(
     "--include-hidden",
     is_flag=True,
+    default=False,
+    show_default=True,
     help="Include files and folders starting with .",
 )
 @click.option(
-    "--ignore-gitignore",
-    is_flag=True,
-    help="Ignore .gitignore files and include all files",
+    "--use-gitignore/--ignore-gitignore",  # Renamed option
+    default=True,
+    show_default=True,
+    help="Use .gitignore files to determine which files to exclude",
 )
 @click.option(
     "ignore_patterns",
@@ -148,7 +151,7 @@ def process_path(
 def cli(
     paths,
     include_hidden,
-    ignore_gitignore,
+    use_gitignore,
     ignore_patterns,
     ignore_files,
     template_file,
@@ -172,8 +175,8 @@ def cli(
         index = process_path(
             path,
             include_hidden,
-            ignore_gitignore,
-            ignore_files,  # Pass ignore_files to process_path
+            use_gitignore,
+            ignore_files,
             ignore_patterns,
             template_file,
             index,
