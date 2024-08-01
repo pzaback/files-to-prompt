@@ -5,7 +5,7 @@
 [![Tests](https://github.com/simonw/files-to-prompt/actions/workflows/test.yml/badge.svg)](https://github.com/simonw/files-to-prompt/actions/workflows/test.yml)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/simonw/files-to-prompt/blob/master/LICENSE)
 
-Concatenate a directory full of files into a single prompt for use with LLMs
+Concatenate a directory full of files into a single prompt for use with LLMs, with custom formatting using Jinja2 templates.
 
 For background on this project see [Building files-to-prompt entirely using Claude 3 Opus](https://simonwillison.net/2024/Apr/8/files-to-prompt/).
 
@@ -25,7 +25,7 @@ To use `files-to-prompt`, provide the path to one or more files or directories y
 files-to-prompt path/to/file_or_directory [path/to/another/file_or_directory ...]
 ```
 
-This will output the contents of every file, with each file preceded by its relative path and separated by `---`.
+This will output the contents of every file, with each file preceded by its relative path and separated by `---` (unless otherwise specified using an alternate template using the `-t` option).
 
 ### Options
 
@@ -35,16 +35,50 @@ This will output the contents of every file, with each file preceded by its rela
   files-to-prompt path/to/directory --include-hidden
   ```
 
-- `--ignore-gitignore`: Ignore `.gitignore` files and include all files.
+- `--use-gitignore`/`--ignore-gitignore`: Use/don't use `.gitignore` files to determine which files to exclude. Defaults to using `.gitignore`.
 
   ```bash
   files-to-prompt path/to/directory --ignore-gitignore
   ```
 
+- `--add-ignore-file <path>` or `-i <path>`: Specify one or more paths to files containing ignore patterns (one per line, blank lines and lines starting with `#` are ignored). Can be used multiple times.
+
+  ```bash
+  files-to-prompt path/to/directory --ignore-file ignore.txt
+  ```
+
 - `--ignore <pattern>`: Specify one or more patterns to ignore. Can be used multiple times.
+
   ```bash
   files-to-prompt path/to/directory --ignore "*.log" --ignore "temp*"
   ```
+
+- `--template-file <path>` or `-t <path>`: Path to a Jinja2 template file for custom formatting of each context item.
+
+   ```bash
+   files-to-prompt path/to/directory --template-file my_template.txt
+   ```
+
+### Template Variables
+
+When using a template file, the following variables are available:
+
+- `index`: The index of the current file being processed (starting from 1).
+- `path`: The relative path to the current file.
+- `content`: The content of the current file.
+
+#### Example Template
+
+```xml
+<document index="{{ index }}">
+  <filepath>
+    {{ path }}
+  </filepath>
+  <document_content>
+    {{ content | indent(4) }}
+  </document_content>
+</document>
+```
 
 ### Example
 
@@ -102,33 +136,6 @@ my_directory/subdirectory/file3.txt
 ---
 Contents of file3.txt
 ---
-```
-
-### XML Output
-
-Anthropic has provided [specific guidelines](https://docs.anthropic.com/claude/docs/long-context-window-tips) for optimally structuring prompts to take advantage of Claude's extended context window.
-To structure the output in this way, use the optional `--xml` flag, which will produce output like this:
-```xml
-Here are some documents for you to reference for your task:
-<documents>
-<document index="1">
-<source>
-my_directory/file1.txt
-</source>
-<document_content>
-Contents of file1.txt
-</document_content>
-</document>
-<document index="2">
-<source>
-my_directory/file2.txt
-</source>
-<document_content>
-Contents of file2.txt
-</document_content>
-</document>
-...
-</documents>
 ```
 
 ## Development
