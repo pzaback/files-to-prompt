@@ -36,6 +36,7 @@ This will output the contents of every file, with each file preceded by its rela
   ```
 
 - `--use-gitignore`/`--ignore-gitignore`: Use/don't use `.gitignore` files to determine which files to exclude. Defaults to using `.gitignore`.
+- `--use-gitignore`/`--ignore-gitignore`: Use/don't use `.gitignore` files to determine which files to exclude. Defaults to using `.gitignore`.
 
   ```bash
   files-to-prompt path/to/directory --ignore-gitignore
@@ -48,6 +49,7 @@ This will output the contents of every file, with each file preceded by its rela
   ```
 
 - `--ignore <pattern>`: Specify one or more patterns to ignore. Can be used multiple times.
+
 
   ```bash
   files-to-prompt path/to/directory --ignore "*.log" --ignore "temp*"
