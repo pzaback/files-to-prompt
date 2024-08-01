@@ -127,19 +127,19 @@ def process_path(
     help="Use .gitignore files to determine which files to exclude",
 )
 @click.option(
-    "ignore_patterns",
-    "--ignore",
-    multiple=True,
-    default=[],
-    help="List of patterns to ignore",
-)
-@click.option(
     "ignore_files",  # New option
     "--add-ignore-file",
     "-i",
     multiple=True,
     type=click.Path(exists=True),
     help="Path to an additional ignore file (can be used multiple times)",
+)
+@click.option(
+    "ignore_patterns",
+    "--ignore",
+    multiple=True,
+    default=[],
+    help="List of patterns to ignore",
 )
 @click.option(
     "--template-file",
