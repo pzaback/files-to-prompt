@@ -114,13 +114,6 @@ def process_path(
 @click.command()
 @click.argument("paths", nargs=-1, type=click.Path(exists=True))
 @click.option(
-    "--include-hidden",
-    is_flag=True,
-    default=False,
-    show_default=True,
-    help="Include files and folders starting with .",
-)
-@click.option(
     "--use-gitignore/--ignore-gitignore",  # Renamed option
     default=True,
     show_default=True,
@@ -135,17 +128,24 @@ def process_path(
     help="Path to an additional ignore file (can be used multiple times)",
 )
 @click.option(
+    "--template-file",
+    "-t",
+    type=click.Path(exists=True),
+    help="Path to a Jinja2 template file for formatting context items.",
+)
+@click.option(
+    "--include-hidden",
+    is_flag=True,
+    default=False,
+    show_default=True,
+    help="Include files and folders starting with .",
+)
+@click.option(
     "ignore_patterns",
     "--ignore",
     multiple=True,
     default=[],
     help="List of patterns to ignore",
-)
-@click.option(
-    "--template-file",
-    "-t",
-    type=click.Path(exists=True),
-    help="Path to a Jinja2 template file for formatting context items.",
 )
 @click.version_option()
 def cli(
