@@ -135,7 +135,7 @@ def process_path(
 )
 @click.option(
     "ignore_files",  # New option
-    "--ignore-file",
+    "--add-ignore-file",
     "-i",
     multiple=True,
     type=click.Path(exists=True),
