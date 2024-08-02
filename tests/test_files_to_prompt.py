@@ -223,7 +223,9 @@ def test_custom_ignore_file(tmpdir):
             f.write("custom_ignored.txt\nanother_custom_ignored.txt")
 
         # Test with custom ignore file
-        result = runner.invoke(cli, ["test_dir", "--ignore-file", "custom_ignore.txt"])
+        result = runner.invoke(
+            cli, ["test_dir", "--add-ignore-file", "custom_ignore.txt"]
+        )
         assert result.exit_code == 0
         assert "test_dir/custom_ignored.txt" not in result.output
         assert "test_dir/another_custom_ignored.txt" not in result.output
@@ -253,7 +255,9 @@ def test_custom_ignore_file_and_gitignore(tmpdir):
             f.write("custom_ignored.txt")
 
         # Test with both custom ignore file and .gitignore
-        result = runner.invoke(cli, ["test_dir", "--ignore-file", "custom_ignore.txt"])
+        result = runner.invoke(
+            cli, ["test_dir", "--add-ignore-file", "custom_ignore.txt"]
+        )
         assert result.exit_code == 0
         assert "test_dir/gitignored.txt" not in result.output
         assert "test_dir/custom_ignored.txt" not in result.output
@@ -285,9 +289,9 @@ def test_multiple_custom_ignore_files(tmpdir):
             cli,
             [
                 "test_dir",
-                "--ignore-file",
+                "--add-ignore-file",
                 "custom_ignore_1.txt",
-                "--ignore-file",
+                "--add-ignore-file",
                 "custom_ignore_2.txt",
             ],
         )
