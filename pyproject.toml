@@ -1,6 +1,6 @@
 [project]
 name = "files-to-prompt"
-version = "0.2.1"
+version = "0.2.2"
 description = "Concatenate a directory full of files into a single prompt for use with LLMs"
 readme = "README.md"
 authors = [{name = "Simon Willison"}]
@@ -22,6 +22,10 @@ CI = "https://github.com/simonw/files-to-prompt/actions"
 
 [project.scripts]
 files-to-prompt = "files_to_prompt.cli:cli"
+f2p = "files_to_prompt.cli:cli"
 
 [project.optional-dependencies]
 test = ["pytest"]
+
+[tool.setuptools]
+packages = ["files_to_prompt"]
